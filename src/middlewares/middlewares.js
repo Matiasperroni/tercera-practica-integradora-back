@@ -17,7 +17,7 @@ export const isUser = (req, res, next) => {
     console.log("soy user", req.session.user);
     if (!req?.session?.user?.role) {
         return res.redirect("/login");
-    } else if (req?.session?.user?.role !== "Usuario") {
+    } else if (req?.session?.user?.role !== "User") {
         return res.redirect("/register");
     }
     next();
@@ -25,6 +25,6 @@ export const isUser = (req, res, next) => {
 
 export const isUserAvailableToAddToCart = (req, res, next) => {
     console.log("soy user", req.session.user);
-    if(req?.session?.user?.role !== "Usuario") return res.send({error: "You must be an user to add products to cart."})
+    if(req?.session?.user?.role !== "User") return res.status(403).send({error: "You must be an user to add products to cart."})
     next();
 }
