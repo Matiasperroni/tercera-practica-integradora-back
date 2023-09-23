@@ -4,7 +4,6 @@ import dotenv from "dotenv";
 dotenv.config();
 
 export const ENVIRONMENT = process.env.NODE_ENV;
-console.log(ENVIRONMENT);
 
 const logLevels = {
     debug: 5,
@@ -36,11 +35,11 @@ const devLogger = winston.createLogger({
 const prodLogger = winston.createLogger({
     levels: logLevels,
     format: winston.format.combine(
-        winston.format.colorize({ all: true }), // Agregar color
-        winston.format.simple() // Formato simple para el mensaje
+        winston.format.colorize({ all: true }), 
+        winston.format.simple()
     ),
     transports: [
-        new winston.transports.Console({ level: "info" }),
+        new winston.transports.Console({ level: "debug" }),
         new winston.transports.File({
             filename: "./error.log",
             level: "error",
@@ -62,7 +61,7 @@ export const addLogger = (req, res, next) => {
     req.logger.http(
         `${req.method} en ${
             req.url
-        } - ${new Date().toLocaleDateString()} en ambiente ${envData.log}`
+        } - ${new Date().toLocaleDateString()} en ambiente ${ENVIRONMENT}`
     );
     next();
 };

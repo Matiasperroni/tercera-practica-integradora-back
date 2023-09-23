@@ -1,15 +1,15 @@
 import { Router } from "express";
 
 import {getProducts, getProductById, addProduct, updateProduct, deleteProduct, mockingProducts} from "../controllers/products.controller.js"
-import { isAdmin } from '../middlewares/middlewares.js';
+import { isAdmin, isUser } from '../middlewares/middlewares.js';
 const router = Router();
 
 
-router.get("/mockingproducts", mockingProducts)
+router.get("/mockingproducts", isUser, mockingProducts)
 
-router.get("/", getProducts);
+router.get("/", isUser, getProducts);
 
-router.get("/:pid", getProductById);
+router.get("/:pid", isUser, getProductById);
 
 router.post("/", isAdmin, addProduct);
 

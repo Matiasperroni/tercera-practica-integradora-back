@@ -2,16 +2,20 @@ import { messageRepository, productRepository } from "../repositories/index.js";
 import CustomError from "../utils/errors/CustomError.js";
 
 export const sendProductList = async () => {
-    const products = await productRepository.getProducts();
-    if (!products) {
-        CustomError.createError({
-            name: "Request error",
-            cause: "We´ll look into this.",
-            code: EErrors.ROUTING_ERROR,
-            message: "Could not get all messages",
-        });
+    try {
+        const products = await productRepository.getProducts();
+        if (!products) {
+            CustomError.createError({
+                name: "Request error",
+                cause: "We´ll look into this.",
+                code: EErrors.ROUTING_ERROR,
+                message: "Could not get all messages",
+            });
+        }
+        return products;
+    } catch (error) {
+        req.logger.error(`Interval server error getting products ${error}`);
     }
-    return products;
 };
 
 // export const addMessage = async (user, message) => {

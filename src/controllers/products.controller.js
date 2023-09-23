@@ -9,7 +9,8 @@ import {
 import EErrors from "../utils/errors/Enum.js";
 
 export const getProducts = async (req, res) => {
-    const { page, query, limit, order } = req.query;
+    try {
+        const { page, query, limit, order } = req.query;
     let sortBy;
     if (order === "desc") {
         sortBy = -1;
@@ -39,6 +40,10 @@ export const getProducts = async (req, res) => {
         );
     }
     res.render("products", { products, query, order, user: req.session.user });
+    } catch(error) {
+        req.logger.error(`Interval server error getting products ${error}`)
+        res.status(500).send("Error");
+    }
 };
 
 export const getProductById = async (req, res) => {
@@ -55,6 +60,7 @@ export const getProductById = async (req, res) => {
         }
         res.send(pFound);
     } catch (error) {
+        req.logger.error(`Interval server error getting products by id ${error}`)
         res.status(500).send("Error");
     }
 };
@@ -125,7 +131,7 @@ export const deleteProduct = async (req, res) => {
         }
         res.send(productToDelete);
     } catch (error) {
-        console.error(error);
+        req.logger.error(`Interval server error deleting products ${error}`)
         res.status(500).send("Error getting data.");
     }
 };

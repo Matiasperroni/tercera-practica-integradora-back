@@ -24,7 +24,7 @@ export const createNewCart = async (req, res) => {
         }
         res.send(cart);
     } catch (error) {
-        console.error(error);
+        req.logger.error(`Interval server error creating cart ${error}`)
         res.status(500).send("Error al obtener los datos");
     }
 };
@@ -45,7 +45,7 @@ export const getCartByID = async (req, res) => {
         // res.send({products});
         res.render("cart", { products });
     } catch (error) {
-        console.error(error);
+        req.logger.error(`Interval server error getting cart by id ${error}`)
         res.status(500).send("Can´t get cart data.");
     }
 };
@@ -80,7 +80,7 @@ export const addProductToCart = async (req, res) => {
         );
         res.send(productAddedToCart);
     } catch (error) {
-        console.error(error);
+        req.logger.error(`Interval server error adding product to cart${error}`)
         res.status(500).send("Error, unable to obtain data");
     }
 };
@@ -143,7 +143,7 @@ export const finishPurchase = async (req, res) => {
             res.status(500).send("error: error trying to purchase.");
         }
     } catch (error) {
-        console.error(error);
+        req.logger.error(`Interval server error finishing purchase ${error}`)
         res.status(500).send("Error purchasing.");
     }
 };
