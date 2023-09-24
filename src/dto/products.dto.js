@@ -7,5 +7,6 @@ export default class ProductDTO {
         this.stock = product.stock
         this.category = product.category
         this.code = product.code
+        this.owner = product.owner
     }
 }

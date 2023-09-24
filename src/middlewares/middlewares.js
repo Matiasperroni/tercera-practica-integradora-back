@@ -1,30 +1,48 @@
 export const isConnected = (req, res, next) => {
-    if(req.session.user) return res.redirect("/api/products")
+    if (req.session.user) return res.redirect("/api/products");
     next();
-}
+};
 
 export const isDisconnected = (req, res, next) => {
-    if(!req.session.user) return res.redirect("/login")
+    if (!req.session.user) return res.redirect("/login");
     next();
-}
+};
 
-export const isAdmin = (req, res, next) => {
-    if(req?.session?.user?.role !== "Admin") return res.status(401).send({error: "Unauthorized"})
-    next();
-}
-
-export const isUser = (req, res, next) => {
-    console.log("soy user", req.session.user);
-    if (!req?.session?.user?.role) {
-        return res.redirect("/login");
-    } else if (req?.session?.user?.role !== "User") {
-        return res.redirect("/register");
+export const isAdminOrPremium = (req, res, next) => {
+    const user = req.session.user;
+    console.log(user, "a verrrr");
+    if (user.role === "Admin" || user.role === "Premium") {
+        next();
+    } else {
+        res.status(401).send({ error: "Unauthorized" });
     }
-    next();
-}
+};
+
+export const isUserPremiumOrAdmin = (req, res, next) => {
+    const user = req.session.user;
+    if (
+        user.role === "Admin" ||
+        user.role === "Premium" ||
+        user.role === "User"
+    ) {
+        next();
+    } else {
+        req.logger.error(
+            "Users with the 'user' role do not have permissions to perform this action"
+        );
+        res.status(401).send(
+            "Error: You do not have permissions to perform this action"
+        );
+    }
+};
 
 export const isUserAvailableToAddToCart = (req, res, next) => {
-    console.log("soy user", req.session.user);
-    if(req?.session?.user?.role !== "User") return res.status(403).send({error: "You must be an user to add products to cart."})
-    next();
-}
+    if(req?.session?.user?.role === "User" || req?.session?.user?.role === "Premium") {
+        next()
+    } else {
+        return res
+            .status(403)
+            .send({ error: "You must be an user to add products to cart." })
+    }
+};
+

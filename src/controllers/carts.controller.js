@@ -1,7 +1,7 @@
 // import CartManagerDB from "../dao/mongo/carts.manager.js";
 // const cartManager = new CartManagerDB();
 // import ProductDTO from '../dto/products.dto.js';
-import { cartRepository } from "../repositories/index.js";
+import { cartRepository, productRepository } from "../repositories/index.js";
 import CustomError from "../utils/errors/CustomError.js";
 import { createCartError } from "../utils/errors/errorInformation.js";
 import EErrors from '../utils/errors/Enum.js';
@@ -55,6 +55,7 @@ export const addProductToCart = async (req, res) => {
     try {
         const cartID = req.params.cid;
         const prodID = req.params.pid;
+        const user = req.session.user;
         const cart = await cartRepository.getById(cartID);
         console.log(cart);
         if (cart) {
@@ -72,6 +73,15 @@ export const addProductToCart = async (req, res) => {
                 cause: createCartError(cartID, prodID),
                 code: EErrors.ROUTING_ERROR,
                 message: "Error creating cart.",
+            })
+        }
+        const productToAdd = await productRepository.getProductById(prodID)
+        if(user.role === "Premium" && user.email === productToAdd.owner){ 
+            CustomError.createError({
+                name: "Request error",
+                cause: createCartError(cartID, prodID),
+                code: EErrors.ROUTING_ERROR,
+                message: "You can not add an item that its yours to your cart.",
             })
         }
         const productAddedToCart = await cartRepository.addToCart(

@@ -1,20 +1,20 @@
 import { Router } from "express";
 
 import {getProducts, getProductById, addProduct, updateProduct, deleteProduct, mockingProducts} from "../controllers/products.controller.js"
-import { isAdmin, isUser } from '../middlewares/middlewares.js';
+import { isAdminOrPremium, isUserPremiumOrAdmin } from '../middlewares/middlewares.js';
 const router = Router();
 
 
-router.get("/mockingproducts", isUser, mockingProducts)
+router.get("/mockingproducts", isUserPremiumOrAdmin, mockingProducts)
 
-router.get("/", isUser, getProducts);
+router.get("/", isUserPremiumOrAdmin, getProducts);
 
-router.get("/:pid", isUser, getProductById);
+router.get("/:pid", isUserPremiumOrAdmin, getProductById);
 
-router.post("/", isAdmin, addProduct);
+router.post("/", isAdminOrPremium,  addProduct);
 
-router.put("/:pid", isAdmin, updateProduct);
+router.put("/:pid", isAdminOrPremium, updateProduct);
 
-router.delete("/:pid", isAdmin, deleteProduct);
+router.delete("/:pid", isAdminOrPremium, deleteProduct);
 
 export default router;

@@ -61,52 +61,51 @@ export const sendEmail = (req, res) => {
             to: email,
             subject: "Recover password",
             html: `<h1>This is an email to recover your password, if you havent requested it ignore this message.</h1>
-                          <hr>
-                          <a href="http://localhost:8080/restorepass/${jwt}">CLICK HERE</a>
-                  `,
+                        <hr>
+                        <a href="http://localhost:8080/restorepass/${jwt}">CLICK HERE</a>
+                    `,
         });
 
         res.send("An email has been send to you, verify your inbox to recover your password.");
     } catch (error) {
-        req.logger.error(`Internal error sending email ${error}`);
-        res.status(500).send(`Internal server error ${error}`);
+        req.logger.error(`Internal error sending email. ${error}`);
+        res.status(500).send(`Internal server error. ${error}`);
     }
 };
 
 export const changePassword = async (req, res) => {
     try {
         const { token } = req.params;
-        console.log("soy el token", token);
+        // console.log("soy el token", token);
         const { newPassword } = req.body;
-        console.log("soy el pw", newPassword);
+        // console.log("soy el pw", newPassword);
 
         const data = jwt.decode(token);
-        console.log("soy el data", data);
+        // console.log("soy el data", data);
         const email = data.email;
-        console.log("soy el email", email);
+        // console.log("soy el email", email);
 
         const user = await userModel.findOne({ email });
-        console.log("soy el user", user);
+        // console.log("soy el user", user);
         if (!user) {
             req.logger.error("User not found");
             res.status(404).send("User not found");
         }
 
         if (validatePassword(user, newPassword)) {
-            req.logger.info("The password must be different");
+            req.logger.info("The password must be different.");
             res.status(400).send("Your password can´t be one that you used before.");
             return;
         }
 
         const hashedNewPassword = createHash(newPassword);
-        console.log("soy el hashedpw", hashedNewPassword);
+        // console.log("soy el hashedpw", hashedNewPassword);
         user.password = hashedNewPassword;
-        console.log(user);
         await user.save();
 
         res.status(200).send("Your password has been changed.");
     } catch (error) {
-        req.logger.error(`Interval server error ${error}`);
-        res.status(500).send(`Interval server error ${error}`);
+        req.logger.error(`Interval error changing password. ${error}`);
+        res.status(500).send(`Interval server error. ${error}`);
     }
 };
